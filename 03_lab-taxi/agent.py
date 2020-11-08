@@ -12,9 +12,9 @@ class Agent:
         """
         self.nA = nA
         self.Q = defaultdict(lambda: np.zeros(self.nA))
-        self.epsilon = 0.001 #0.005
-        self.alpha = 0.9
-        self.gamma = 1.0
+        self.epsilon = 0.001#0.001 #0.005
+        self.alpha = 0.95#0.9
+        self.gamma = 0.99#1.0
         
 
     def select_action(self, state):
