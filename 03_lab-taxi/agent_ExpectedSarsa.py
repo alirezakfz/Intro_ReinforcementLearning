@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Nov  9 11:39:30 2020
+
+@author: alire
+"""
+
 import numpy as np
 from collections import defaultdict
 
@@ -16,7 +23,7 @@ class Agent:
         self.alpha = 0.8#0.9
         self.gamma = .8#1.0
         
-
+        
     def select_action(self, state):
         """ Given the state, select an action.
 
@@ -38,7 +45,6 @@ class Agent:
             # Select randomly an action
             return np.random.choice(np.arange(self.nA))
         
-    
         
     def step(self, state, action, reward, next_state, done):
         """ Update the agent's knowledge, using the most recently sampled tuple.
@@ -54,7 +60,6 @@ class Agent:
         #self.Q[state][action] += 1
 
         # Implementation using Temporal Difference method : Expected Sarsa
-
         # Backup current Q for state, action pair
         Qsa = self.Q[state][action]      
         
@@ -65,9 +70,10 @@ class Agent:
         # With probability (1 - epsilon), the agent will select the greedy action
         best_a = np.argmax(self.Q[next_state])
         pi_s[best_a] = (1 - self.epsilon) + (self.epsilon / self.nA)
-      
+                
         # Retrieve the expected value for the next_state (If end of episode / next_state is None, then return 0)
         Qsa_next = np.dot(self.Q[next_state], pi_s) if next_state is not None  else 0
         
         # Update the Q-Table
         self.Q[state][action] = Qsa + self.alpha * ((reward + self.gamma * Qsa_next) - Qsa)
+
