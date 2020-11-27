@@ -16,13 +16,13 @@ avg_rewards, best_avg_reward = interact(env, agent)
 
 
 
-agent = QAgent()
-avg_rewards, best_avg_reward = interact(env, agent)
+#agent = QAgent()
+#avg_rewards, best_avg_reward = interact(env, agent)
 
 # avg_list=list(avg_rewards)
 # points=np.arange(len(avg_list))
 # plt.plot(points, avg_list)
 
 
-agent = ESAgent()
-avg_rewards, best_avg_reward = interact(env, agent)
+#agent = ESAgent()
+#avg_rewards, best_avg_reward = interact(env, agent)
