@@ -19,7 +19,7 @@ wheels/
 
 # Jupyter Notebooks (Optional)
 # If you want to commit notebooks, remove these lines
-*.ipynb
+#*.ipynb
 
 # Temporary Files
 *.pt  # PyTorch model checkpoints (adjust extension if needed)
