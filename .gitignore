@@ -1,3 +1,41 @@
 
 RL3_LazyProgramming/a2c/__pycache__/subproc_vec_env.cpython-38.pyc
 RL3_LazyProgramming/a2c/__pycache__/subproc_vec_env.cpython-37.pyc
+
+# General
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+wheels/
+.env  # Add your environment variables file here
+
+# IDE and File History
+.idea/
+.vscode/
+.history
+*.ipynb_checkpoints
+
+# Jupyter Notebooks (Optional)
+# If you want to commit notebooks, remove these lines
+*.ipynb
+
+# Temporary Files
+*.pt  # PyTorch model checkpoints (adjust extension if needed)
+*.log
+tmp/
+
+# Testing and Results (Optional)
+# If you want to track test results or plots, remove these lines
+test_results/
+plots/
+
+# Specific requirements files (if using virtual environments)
+requirements.txt  # Can be tracked if needed
+# Or:
+# - requirements.dev.txt
+# - requirements.prod.txt
+
+pytorch_codes\env/
+pytorch_codes/env/*
