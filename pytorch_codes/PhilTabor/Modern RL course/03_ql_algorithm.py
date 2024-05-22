@@ -3,49 +3,54 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-class QL:
-    def __init__(self, n_actions, n_states, alfa, gamma, ep_max, ep_min) -> None:
-        self.alfa = alfa
+class Agent():
+    def __init__(self, lr, gamma, n_actions, 
+                 n_states, eps_start, eps_end, eps_dec) -> None:
+        self.lr = lr
         self.gamma = gamma
-        self.ep_max = ep_max
-        self.ep_min = ep_min
-        self.q = np.zeros((n_states, n_actions))
+        self.n_actions = n_actions
+        self.n_states= n_states
+        self.epsilon = eps_start
+        self.eps_min = eps_end
+        self.eps_dec = eps_dec
+
+        self.Q = {}
+        self.init_Q()
+
     
-    def update(self, state, action, new_state, reward):
-        max_a = np.argmax(self.q[new_state,:])
-        self.q[state, action] = self.q[state, action] + self.alfa*(reward + self.gamma*self.q[new_state,max_a] - self.q[state, action] )
-    
-    def best_action(self, state):
-        index = np.argmax(self.q[state,:])
-        return index + 1
-    
-    def dec_epsilon(self):
-        if(self.ep_max > self.ep_min):
-            self.ep_max = self.ep_max - self.ep_max*0.001
+    def init_Q(self):
+        for state in range(self.n_states):
+            for action in range(self.n_actions):
+                self.Q[(state, action)] = 0.0
+
+    def choose_action(self, state):
+        if np.random.random() < self.epsilon:
+            action = np.random.choice([i for i in range(self.n_actions)])
         else:
-            self.ep_max = self.ep_min
+            actions = np.array([self.Q[state, a] for a in range(self.n_actions)])
+            action = np.argmax(actions)
+        return action
     
+    def decrement_epsilon(self):
+        self.epsilon = self.epsilon*self.eps_dec if self.epsilon > self.eps_min else self.eps_min
+    
+    def learn(self, state, action, reward, state_):
+        actions = np.array([self.Q[(state_,a)] for a in range(self.n_actions)])
+        a_max = np.argmax(actions)
+        self.Q[(state, action)] += self.lr*(reward + self.gamma*self.Q[(state, a_max)] - self.Q[(state, action)])
+        self.decrement_epsilon()
 
-class Agent:
-    env = gym.make("FrozenLake-v1")
-    n_actions = env.action_space.n
-    n_states = env.observation_space.n
-    n_games = 10000
-    alfa = 0.001
-    gamma = 0.9
-    ep_max = 1.0
-    ep_min = 0.01
-
+if __name__ == "__main__":
+    env = gym.make('FrozenLake-v1')
+    agent = Agent(lr=0.001, gamma=0.9, 
+                  eps_start=1.0, eps_end=0.01, 
+                  eps_dec=0.999995, 
+                  n_actions=env.action_space.n, 
+                  n_states=env.observation_space.n)
+    
+    scores =[]
     win_pct = []
-    scores = []
-    ql = QL(n_actions=n_actions, 
-            n_states=n_states, 
-            gamma=gamma, 
-            alfa=alfa, 
-            ep_max=ep_max,
-            ep_min=ep_min
-            )
-    
+    n_games = 50000
 
 
     for i in range(n_games):
@@ -53,31 +58,21 @@ class Agent:
         obs = env.reset()[0]
         score = 0
         while not done:
-            if(np.random.random() > ep_max):
-                action = ql.best_action(obs)
-            else:
-                action = np.random.choice(range(env.action_space.n))
-
-            new_obs, reward, done, info, _ = env.step(action)
-            ql.update(
-                action=action,
-                state=obs,
-                new_state=new_obs,
-                reward=reward
-                )
-            
+            action = agent.choose_action(obs)
+            obs_, reward, done, info, _ = env.step(action)
+            agent.learn(obs, action, reward, obs_)
             score += reward
-
-        ql.dec_epsilon()
+            obs = obs_
+        
         scores.append(score)
-        if i%10 == 0:
-            average = np.mean(scores[-10:])
-            win_pct.append(average)
+        if i%100 ==0:
+            win_avg = np.mean(scores[-100:])
+            win_pct.append(win_avg)
+            if i%1000 == 0:
+                print("episode ", i, "win pct %.2f"%win_avg, "epsilon %.2f"% agent.epsilon)
 
+    print("plotting")
+    plt.plot(win_pct)
+    plt.show()
 
-
-agent = Agent()
-
-plt.plot(agent.win_pct)
-plt.show()
 
