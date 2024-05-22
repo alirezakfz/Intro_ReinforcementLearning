@@ -65,7 +65,7 @@ class Agent():
 
 if __name__ == "__main__":
     env = gym.make('CartPole-v1')
-    n_games = 10000
+    n_games = 5000
     scores = []
     eps_history = []
     agent = Agent(input_dims=env.observation_space.shape,
